@@ -14,10 +14,11 @@ pipeline {
         }
         stage ('docker build and push'){
             steps {
-                withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                    sh "docker login --username ${DOCKERHUB_USERNAME} --password ${DOCKERHUB_PASSWORD}"
-                    sh "docker build -t gudditi/tomcat-resume:latest ."
-                    sh "docker push gudditi/tomcat-resume:latest"
+                withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'passcode', usernameVariable: 'user')]) {
+                sh 'docker login -u $user -p $passcode'
+                }
+                
+                
             }
         }
     }
