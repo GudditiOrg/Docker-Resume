@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage ('checkout') {
             steps {
-                git('https://github.com/GudditiOrg/Docker-Resume.git')
+                git branch: 'main', url: 'https://github.com/GudditiOrg/Docker-Resume.git'
             }
 
         }
