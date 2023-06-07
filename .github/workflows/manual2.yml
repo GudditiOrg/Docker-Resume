@@ -1,24 +1,29 @@
-name: Manual Approval Workflow
+name: Two Jobs Workflow
 
 on:
-  workflow_dispatch:  # Triggered manually
+  workflow_run:
+    workflows: ["job1"]
+    types:
+      - completed
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
       - name: Step 1
-        run: echo "Executing Job 1..."
+        run: echo "Job 1 executed normally"
 
   job2:
-    needs: job1
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch'  # Skip job if manually triggered
+    needs: job1
+    if: github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Step 1
-        run: echo "Executing Job 2..."
+        run: echo "Job 2 executed"
+
       - name: Manual Approval
-        id: approval
-        run: echo "::set-output name=approved::true"  # Approve manually
-      - name: Check Approval
-        run: echo "Approval status: ${{ needs.job2.outputs.approved }}"
+        if: always()
+        uses: repo-sync/prompt@v1
+        with:
+          prompt: "Manual approval required. Do you want to proceed?"
+          confirm-text: "Proceed"
