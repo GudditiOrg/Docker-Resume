@@ -4,22 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       manual_approval:
-        description: 'Approve the job manually'
+        description: 'Approve the job manually (true -> approve) (false -> cancel) '
         required: true
         default: 'false'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: docker build
-        run: docker build -t gudditi/docker:latest .
-
   build:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Step 1
+        run: echo "Running Step 1"
+
       - name: Manual Approval Step
         if: ${{ github.event.inputs.manual_approval == 'true' }}
         run: echo "Job is approved and can proceed"
+
+      - name: Step 2
+        run: echo "Running Step 2"
