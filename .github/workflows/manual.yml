@@ -1,0 +1,33 @@
+name: Manual Job Approval
+
+on:
+  workflow_run:
+    workflows:
+      - Your_Workflow_Name
+    types:
+      - requested
+
+jobs:
+  manual_approval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if manual approval is requested
+        run: |
+          if [ "${{ github.event.action }}" == "requested" ]; then
+            echo "Manual approval requested"
+            echo "::set-output name=approval_required::true"
+          else
+            echo "No manual approval requested"
+            echo "::set-output name=approval_required::false"
+          fi
+
+  main_job:
+    runs-on: ubuntu-latest
+    needs: manual_approval
+    if: needs.manual_approval.outputs.approval_required == 'true'
+    steps:
+      - name: Your Job Step 1
+        run: echo "Executing Job Step 1"
+
+      - name: Your Job Step 2
+        run: echo "Executing Job Step 2"
