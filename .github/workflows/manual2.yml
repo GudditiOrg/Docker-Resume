@@ -1,0 +1,26 @@
+name: Manual Approval 2
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1
+        run: echo "Running Step 1"
+
+      - name: Set Manual Approval Flag
+        run: |
+          if [ "${{ github.event.inputs.manual_approval }}" == "true" ]; then
+            echo "Approve" >> $GITHUB_ENV
+          else
+            echo "Decline" >> $GITHUB_ENV
+          fi
+
+      - name: Manual Approval Step
+        if: env.APPROVAL == 'Approve'
+        run: echo "Job is approved and can proceed"
+
+      - name: Step 2
+        run: echo "Running Step 2"
