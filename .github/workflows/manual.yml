@@ -9,6 +9,12 @@ on:
         default: 'false'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+        run: docker build -t gudditi/docker:latest .
+
   build:
     runs-on: ubuntu-latest
 
