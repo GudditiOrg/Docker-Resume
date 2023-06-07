@@ -1,3 +1,5 @@
+name: github actions token
+on: [push]
 jobs:
   job:
     runs-on: ubuntu-latest
