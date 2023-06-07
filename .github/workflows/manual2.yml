@@ -1,6 +1,12 @@
-name: Manual Approval 2
+name: Manual Approval
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      manual_approval:
+        description: 'Approve the step manually'
+        required: true
+        default: 'false'
 
 jobs:
   build:
@@ -10,17 +16,12 @@ jobs:
       - name: Step 1
         run: echo "Running Step 1"
 
-      - name: Set Manual Approval Flag
-        run: |
-          if [ "${{ github.event.inputs.manual_approval }}" == "true" ]; then
-            echo "Approve" >> $GITHUB_ENV
-          else
-            echo "Decline" >> $GITHUB_ENV
-          fi
-
       - name: Manual Approval Step
-        if: env.APPROVAL == 'Approve'
-        run: echo "Job is approved and can proceed"
+        run: echo "This step requires manual approval"
 
       - name: Step 2
         run: echo "Running Step 2"
+        if: env.APPROVED == 'true'
+
+      - name: Step 3
+        run: echo "Running Step 3"
