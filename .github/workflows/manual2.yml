@@ -9,13 +9,15 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      # job1 steps...
+      - name: hello
+        run: echo "hello"
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     steps:
-      # job2 steps...
+      - name: hello
+        run: echo "hello"
 
   manual_approval:
     needs: job2
