@@ -1,34 +1,85 @@
-name: Manual Approval Workflow
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
-  job1:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: hello
-        run: echo "hello"
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-  job2:
-    needs: job1
-    runs-on: ubuntu-latest
-    steps:
-      - name: hello
-        run: echo "hello"
+      - name: Build
+        run: |
+          echo "Building the project..."
+          # Add your build commands here
 
-  manual_approval:
-    needs: job2
+  test:
     runs-on: ubuntu-latest
-    if: ${{ needs.job2.result == 'success' }}
+    needs: build
     steps:
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add your test commands here
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Deploy Application
+        run: |
+          echo "Deploying the application..."
+          # Add your deployment commands here
+
+  hold:
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Manual Approval
+        id: approval
+        uses: actions/github-script@v5
         with:
-          commit-message: 'Workflow manual approval'
-          title: 'Manual Approval Required'
-          branch: 'manual-approval'
-          base: 'main'
-          body: 'Please review and approve this workflow run.'
+          script: |
+            const { data: pullRequest } = await github.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: context.sha,
+              state: 'open'
+            });
+            const { data: checks } = await github.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha
+            });
+            const { data: statuses } = await github.repos.listStatusesForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha
+            });
+            
+            const isPullRequest = pullRequest.length > 0;
+            const hasChecks = checks.total_count > 0;
+            const hasPendingStatuses = statuses.some(status => status.state === 'pending');
+            
+            if (isPullRequest || hasChecks || hasPendingStatuses) {
+              core.setFailed('Cannot approve manually if there are pending checks or pull requests.');
+              return;
+            }
+            
+            core.setOutput('approved', 'true');
+            console.log('Manual approval granted.');
+
+      - name: Proceed with Deployment
+        if: steps.approval.outputs.approved == 'true'
+        # Job steps to proceed with the deployment
