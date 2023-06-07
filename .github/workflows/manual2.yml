@@ -1,25 +1,24 @@
-name: Execute Jobs
+name: Manual Approval Workflow
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:  # Custom event for manual trigger
+  workflow_dispatch:  # Triggered manually
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
       - name: Step 1
-        run: echo "Executing Job 1"
+        run: echo "Executing Job 1..."
 
   job2:
     needs: job1
-    if: github.event == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'  # Skip job if manually triggered
     steps:
       - name: Step 1
-        run: echo "Holding Job 2"
-        if: false  # Skip this step initially
-      - name: Step 2
-        run: echo "Executing Job 2"
+        run: echo "Executing Job 2..."
+      - name: Manual Approval
+        id: approval
+        run: echo "::set-output name=approved::true"  # Approve manually
+      - name: Check Approval
+        run: echo "Approval status: ${{ needs.job2.outputs.approved }}"
