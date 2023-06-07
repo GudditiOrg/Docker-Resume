@@ -1,46 +1,18 @@
-name: Manual Job Approval
+name: Manual Approval
 
 on:
-  pull_request:
-    types:
-      - opened
   workflow_dispatch:
+    inputs:
+      manual_approval:
+        description: 'Approve the job manually'
+        required: true
+        default: 'false'
 
 jobs:
-  manual_approval:
+  build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+
     steps:
-      - name: Request Manual Approval
-        id: approval
-        uses: peter-evans/create-pull-request-comment@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: |
-            Manual approval is required to proceed with this job.
-            To approve, please comment "/approve".
-            To stop, please comment "/stop".
-
-  main_job:
-    runs-on: ubuntu-latest
-    needs: manual_approval
-    if: needs.manual_approval.outputs.approval == 'true' && github.event_name == 'pull_request'
-    steps:
-      - name: Check PR Comment
-        run: |
-          if [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
-            echo "Manual approval received. Proceeding with the job."
-            echo "::set-output name=approved::true"
-          elif [[ "${{ github.event.comment.body }}" == "/stop" ]]; then
-            echo "Manual approval denied. Stopping the job."
-            echo "::set-output name=approved::false"
-          else
-            echo "No valid manual approval comment found."
-            echo "::set-output name=approved::false"
-          fi
-
-      - name: Your Job Step 1
-        run: echo "Executing Job Step 1"
-
-      - name: Your Job Step 2
-        run: echo "Executing Job Step 2"
+      - name: Manual Approval Step
+        if: ${{ github.event.inputs.manual_approval == 'true' }}
+        run: echo "Job is approved and can proceed"
