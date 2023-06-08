@@ -12,6 +12,7 @@ on:
       manual_approval:
         description: 'Approve the job manually (true -> approve) (false -> cancel) '
         required: true
+        default: 'false'
   
 env:
   REGION: us-east-1
@@ -19,12 +20,8 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.input2 == 'true' }}
     steps:
-
-      - name: Manual Approval Step
-        if: ${{ github.event.inputs.manual_approval == 'true' }}
-        run: echo "Job is approved and can proceed"
-
       - name: Step 2
         run: echo "Running Step 2"
         
