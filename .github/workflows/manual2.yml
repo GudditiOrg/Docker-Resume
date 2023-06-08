@@ -1,11 +1,6 @@
 name: Infra automation -> Dev -> QA
+
 on:
-  workflow_dispatch:
-    inputs:
-      manual_approval:
-        description: 'Approve the job manually (true -> approve) (false -> cancel) '
-        required: true
-        default: 'false'
   push:
     branches:
       - "anji/GitHub-actions"
@@ -13,47 +8,56 @@ on:
   pull_request:
     branches:
       - "main"
+  workflow_dispatch:
+    inputs:
+      manual_approval:
+        description: 'Approve the job manually (true -> approve) (false -> cancel) '
+        required: true
+        default: 'false'
 
-  
 env:
   REGION: us-east-1
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.input2 == 'true' }}
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+
     steps:
+      - name: Manual Approval Step
+        run: echo "Job is approved and can proceed"
+
       - name: Step 2
         run: echo "Running Step 2"
-        
-
 
   dev_cdk-diff:
     runs-on: ubuntu-latest
-    needs: test
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
 
   dev_cdk-deploy:
     runs-on: ubuntu-latest
-    needs: dev_cdk-diff
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
-    needs: test
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
-    needs: qa_cdk-diff
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: echo
-        run: echo "hello"
