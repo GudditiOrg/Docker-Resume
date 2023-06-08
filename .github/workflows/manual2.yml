@@ -29,6 +29,7 @@ jobs:
 
   dev_cdk-diff:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: test
     steps:
       - name: checkout code from repo
@@ -36,6 +37,7 @@ jobs:
 
   dev_cdk-deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: dev_cdk-diff
     steps:
       - name: checkout code from repo
@@ -43,6 +45,7 @@ jobs:
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: test
     steps:
       - name: checkout code from repo
@@ -50,6 +53,7 @@ jobs:
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: qa_cdk-diff
     steps:
       - name: checkout code from repo
