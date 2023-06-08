@@ -1,55 +1,172 @@
 name: Infra automation -> Dev -> QA
-
 on:
   workflow_dispatch:
     inputs:
       manual_approval:
         description: 'Approve the job manually (true -> approve) (false -> cancel) '
-        required: false
-
+        required: true
+        default: 'false'
 env:
   REGION: us-east-1
 
-jobs:
+jobs: 
   test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
+    steps:        
+      - name: checkout code from repo
+        uses: actions/checkout@v3
 
-    steps:
-      - name: Manual Approval Step
-        run: echo "Job is approved and can proceed"
-
-      - name: Step 2
-        run: echo "Running Step 2"
-
+      - name: npm install
+        run: |
+          ls -lrt        
+          npm install --no-save
+          npm run test
+      - name: Save npm cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
+  
   dev_cdk-diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
-
+    needs: test
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
+          aws-region: ${{ env.REGION }}
+      - name: dev env cdk diff
+        run: |
+          npm run cdk -- diff \
+            dns \
+            hosted-zone-wildcard-certificate \
+            ecr-repositories \
+            --context env=dev
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: cdk-out
+          path: ./cdk.out
+
 
   dev_cdk-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
-
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    needs: dev_cdk-diff
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
+          aws-region: ${{ env.REGION }}
+      - name: cdk deploy to dev 
+        run: |
+          npm run cdk -- deploy \
+            dns \
+            hosted-zone-wildcard-certificate \
+            ecr-repositories \
+            --require-approval never \
+            --concurrency 4 \
+            --context env=dev
+            - name: Store artifacts
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: cdk-out
+          path: ./cdk.out
+
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
-
+    needs: test
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
+          aws-region: ${{ env.REGION }}
+      - name: dev env cdk diff
+        run: |
+          npm run cdk -- diff \
+            dns \
+            hosted-zone-wildcard-certificate \
+            ecr-repositories \
+            --context env=dev
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: cdk-out
+          path: ./cdk.out
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
-
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    needs: qa_cdk-diff
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
+          aws-region: ${{ env.REGION }}
+
+      - name: cdk deploy to qa
+        run: |
+          npm run cdk -- deploy \
+            dns \
+            hosted-zone-wildcard-certificate \
+            ecr-repositories \
+            --require-approval never \
+            --concurrency 4 \
+            --context env=qa
+            - name: Store artifacts
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: cdk-out
+          path: ./cdk.out
+
