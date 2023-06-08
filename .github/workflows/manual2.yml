@@ -12,7 +12,7 @@ on:
       manual_approval:
         description: 'Approve the job manually (true -> approve) (false -> cancel) '
         required: true
-        default: 'false'
+  
 env:
   REGION: us-east-1
 
@@ -57,5 +57,5 @@ jobs:
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: docker build
-        run: docker build -t gudditi/image:latest .
+      - name: echo
+        run: echo "hello"
