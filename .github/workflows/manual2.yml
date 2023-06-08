@@ -12,54 +12,18 @@ env:
 jobs: 
   test:
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.manual_approval == 'true' }}
     steps:        
       - name: checkout code from repo
         uses: actions/checkout@v3
-
-      - name: npm install
-        run: |
-          ls -lrt        
-          npm install --no-save
-          npm run test
-      - name: Save npm cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
   
   dev_cdk-diff:
     runs-on: ubuntu-latest
     needs: test
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: Restore npm cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
-          aws-region: ${{ env.REGION }}
-      - name: dev env cdk diff
-        run: |
-          npm run cdk -- diff \
-            dns \
-            hosted-zone-wildcard-certificate \
-            ecr-repositories \
-            --context env=dev
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: cdk-out
-          path: ./cdk.out
-
+     
 
   dev_cdk-deploy:
     runs-on: ubuntu-latest
@@ -71,66 +35,17 @@ jobs:
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: Restore npm cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
-          aws-region: ${{ env.REGION }}
-      - name: cdk deploy to dev 
-        run: |
-          npm run cdk -- deploy \
-            dns \
-            hosted-zone-wildcard-certificate \
-            ecr-repositories \
-            --require-approval never \
-            --concurrency 4 \
-            --context env=dev
-            - name: Store artifacts
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: cdk-out
-          path: ./cdk.out
+      
 
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
     needs: test
-    permissions:
-      id-token: write
-      contents: read
+   
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: Restore npm cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
-          aws-region: ${{ env.REGION }}
-      - name: dev env cdk diff
-        run: |
-          npm run cdk -- diff \
-            dns \
-            hosted-zone-wildcard-certificate \
-            ecr-repositories \
-            --context env=dev
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: cdk-out
-          path: ./cdk.out
+    
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
@@ -142,31 +57,4 @@ jobs:
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: Restore npm cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: v1-infra-npm-${{ hashFiles('package-lock.json') }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV }}
-          aws-region: ${{ env.REGION }}
-
-      - name: cdk deploy to qa
-        run: |
-          npm run cdk -- deploy \
-            dns \
-            hosted-zone-wildcard-certificate \
-            ecr-repositories \
-            --require-approval never \
-            --concurrency 4 \
-            --context env=qa
-            - name: Store artifacts
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: cdk-out
-          path: ./cdk.out
-
+    
