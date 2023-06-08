@@ -20,7 +20,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: Manual Approval Step
@@ -31,7 +31,7 @@ jobs:
 
   dev_cdk-diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: checkout code from repo
@@ -39,7 +39,7 @@ jobs:
 
   dev_cdk-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: checkout code from repo
@@ -47,7 +47,7 @@ jobs:
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: checkout code from repo
@@ -55,7 +55,7 @@ jobs:
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.manual_approval == 'true' }}
+    if: ${{ github.event.inputs.manual_approval == 'true' && github.ref == 'refs/heads/main' }}
 
     steps:
       - name: checkout code from repo
