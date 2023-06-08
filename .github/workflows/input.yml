@@ -1,0 +1,33 @@
+name: Manual Trigger with Inputs
+
+on:
+  workflow_dispatch:
+    inputs:
+      input1:
+        description: 'Input 1 description'
+        required: true
+        default: 'Default value 1'
+      input2:
+        description: 'Input 2 description'
+        required: true
+        default: 'Default value 2'
+
+jobs:
+  my_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Display Inputs
+        run: |
+          echo "Input 1: ${{ github.event.inputs.input1 }}"
+          echo "Input 2: ${{ github.event.inputs.input2 }}"
+          echo "::set-output name=input2_value::${{ github.event.inputs.input2 }}"
+
+  my_second_job:
+    runs-on: ubuntu-latest
+    needs: my_job
+
+    steps:
+      - name: Display Input 2
+        run: |
+          echo "Input 2 value from previous job: ${{ needs.my_job.outputs.input2_value }}"
