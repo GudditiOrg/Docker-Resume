@@ -12,8 +12,7 @@ on:
     inputs:
       manual_approval:
         description: 'Approve the job manually (true -> approve) (false -> cancel) '
-        required: true
-        default: 'false'
+        required: false
 
 env:
   REGION: us-east-1
