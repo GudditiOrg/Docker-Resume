@@ -1,13 +1,6 @@
 name: Infra automation -> Dev -> QA
 
 on:
-  push:
-    branches:
-      - "anji/GitHub-actions"
-      - "main"
-  pull_request:
-    branches:
-      - "main"
   workflow_dispatch:
     inputs:
       manual_approval:
