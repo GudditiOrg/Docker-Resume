@@ -17,20 +17,18 @@ on:
 env:
   REGION: us-east-1
 
-jobs: 
+jobs:
   test:
     runs-on: ubuntu-latest
-    outputs:
-      manual_approval: ${{ github.event.inputs.manual_approval }}
     steps:
       - name: Manual Approval Step
         id: approval
-        run: echo "::set-output name=manual_approval::${{ github.event.inputs.manual_approval }}"
+        if: ${{ github.event.inputs.manual_approval == 'true' }}
+        run: echo "Job is approved and can proceed"
         
       - name: checkout code from repo
         uses: actions/checkout@v3
 
-  
   dev_cdk-diff:
     runs-on: ubuntu-latest
     needs: test
@@ -38,32 +36,25 @@ jobs:
       - name: checkout code from repo
         uses: actions/checkout@v3
 
-
-
   dev_cdk-deploy:
     runs-on: ubuntu-latest
     needs: dev_cdk-diff
-
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
     needs: qa_cdk-diff
-
     steps:
       - name: checkout code from repo
         uses: actions/checkout@v3
-      - name: docker build
-        run: docker build -t gudditi/image:latest .
+      - name: echo
+        run: echo "hello"
