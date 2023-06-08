@@ -1,85 +1,67 @@
-name: Build and Deploy
-
+name: Infra automation -> Dev -> QA
 on:
   push:
     branches:
-      - master
+      - "anji/GitHub-actions"
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+  workflow_dispatch:
+    inputs:
+      manual_approval:
+        description: 'Approve the job manually (true -> approve) (false -> cancel) '
+        required: true
+        default: 'false'
+env:
+  REGION: us-east-1
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: |
-          echo "Building the project..."
-          # Add your build commands here
-
+jobs: 
   test:
     runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Manual Approval Step
+        if: ${{ github.event.inputs.manual_approval == 'true' }}
+        run: echo "Job is approved and can proceed"
+        
+      - name: checkout code from repo
+        uses: actions/checkout@v3
 
-      - name: Run Tests
-        run: |
-          echo "Running tests..."
-          # Add your test commands here
-
-  deploy:
+  
+  dev_cdk-diff:
     runs-on: ubuntu-latest
     needs: test
-    if: github.ref == 'refs/heads/master'
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: checkout code from repo
+        uses: actions/checkout@v3
 
-      - name: Deploy Application
-        run: |
-          echo "Deploying the application..."
-          # Add your deployment commands here
 
-  hold:
-    needs: deploy
-    if: github.event_name == 'workflow_dispatch'
+
+  dev_cdk-deploy:
+    runs-on: ubuntu-latest
+    needs: dev_cdk-diff
+
     steps:
-      - name: Manual Approval
-        id: approval
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const { data: pullRequest } = await github.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head: context.sha,
-              state: 'open'
-            });
-            const { data: checks } = await github.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.sha
-            });
-            const { data: statuses } = await github.repos.listStatusesForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.sha
-            });
-            
-            const isPullRequest = pullRequest.length > 0;
-            const hasChecks = checks.total_count > 0;
-            const hasPendingStatuses = statuses.some(status => status.state === 'pending');
-            
-            if (isPullRequest || hasChecks || hasPendingStatuses) {
-              core.setFailed('Cannot approve manually if there are pending checks or pull requests.');
-              return;
-            }
-            
-            core.setOutput('approved', 'true');
-            console.log('Manual approval granted.');
+      - name: checkout code from repo
+        uses: actions/checkout@v3
 
-      - name: Proceed with Deployment
-        if: steps.approval.outputs.approved == 'true'
-        # Job steps to proceed with the deployment
+
+  qa_cdk-diff:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: checkout code from repo
+        uses: actions/checkout@v3
+
+
+  qa_cdk-deploy:
+    runs-on: ubuntu-latest
+    needs: qa_cdk-diff
+
+    steps:
+      - name: checkout code from repo
+        uses: actions/checkout@v3
+      - name: docker build
+        run: docker build -t gudditi/image:latest .
+
