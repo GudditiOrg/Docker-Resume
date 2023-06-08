@@ -1,5 +1,11 @@
 name: Infra automation -> Dev -> QA
 on:
+  workflow_dispatch:
+    inputs:
+      manual_approval:
+        description: 'Approve the job manually (true -> approve) (false -> cancel) '
+        required: true
+        default: 'false'
   push:
     branches:
       - "anji/GitHub-actions"
@@ -7,12 +13,7 @@ on:
   pull_request:
     branches:
       - "main"
-  workflow_dispatch:
-    inputs:
-      manual_approval:
-        description: 'Approve the job manually (true -> approve) (false -> cancel) '
-        required: true
-        default: 'false'
+
   
 env:
   REGION: us-east-1
@@ -29,7 +30,6 @@ jobs:
 
   dev_cdk-diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: test
     steps:
       - name: checkout code from repo
@@ -37,7 +37,6 @@ jobs:
 
   dev_cdk-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: dev_cdk-diff
     steps:
       - name: checkout code from repo
@@ -45,7 +44,6 @@ jobs:
 
   qa_cdk-diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: test
     steps:
       - name: checkout code from repo
@@ -53,7 +51,6 @@ jobs:
 
   qa_cdk-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.input2 == 'true' }}
     needs: qa_cdk-diff
     steps:
       - name: checkout code from repo
