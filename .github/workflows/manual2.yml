@@ -28,12 +28,7 @@ jobs:
       - name: Step 2
         run: echo "Running Step 2"
         
-      - name: Manual Approval
-        if: always()
-        uses: repo-sync/prompt@v1
-        with:
-          prompt: "Manual approval required. Do you want to proceed?"
-          confirm-text: "Proceed"
+
 
   dev_cdk-diff:
     runs-on: ubuntu-latest
