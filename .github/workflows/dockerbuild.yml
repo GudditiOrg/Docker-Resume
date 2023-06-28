@@ -3,11 +3,18 @@ on:
   push:
     branches:
       - main
+      - develop
   workflow_dispatch:
 
 jobs:
-  docker:
+  main:
     uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@main
     with:
       image_name: my-awesome-app
       tag: $GITHUB_RUN_NUMBER
+  develop:
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@develop
+    with:
+      image_name: my-awesome-app
+      tag: $GITHUB_RUN_NUMBER
+
