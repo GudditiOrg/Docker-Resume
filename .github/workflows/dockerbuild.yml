@@ -7,15 +7,12 @@ on:
 
 jobs:
   main:
-    if: github.ref == 'refs/heads/main'
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@main
     with:
       image_name: my-awesome-app
-      tag: ${{ github.run_number }}
-
+      tag: $GITHUB_RUN_NUMBER
   develop:
-    if: github.ref == 'refs/heads/develop'
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@develop
     with:
       image_name: my-awesome-app
-      tag: ${{ github.run_number }}
+      tag: $GITHUB_RUN_NUMBER
