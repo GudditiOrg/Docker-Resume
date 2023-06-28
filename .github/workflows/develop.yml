@@ -2,13 +2,18 @@ on:
   push:
     branches:
       - 'develop/*'
-
   workflow_dispatch:
 
 jobs:
   main:
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@v1
-    if: startsWith(github.ref_name, 'develop/')
-    with:
-      image_name: my-awesome-app
-      tag: $GITHUB_RUN_NUMBER
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run reusable workflow
+        uses: ./.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+        if: startsWith(github.ref, 'refs/heads/develop/')
+        with:
+          image_name: my-awesome-app
+          tag: ${{ github.run_number }}
