@@ -31,5 +31,7 @@ jobs:
 
       - name: Build and Push the Image
         run: docker build -t ${{inputs.image_name}}:${{env.final_tag}} .
+      - name: ref
+        run:  echo ${{ github.ref_name }}
 
 
