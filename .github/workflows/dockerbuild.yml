@@ -1,4 +1,3 @@
-
 on:
   push:
     branches:
@@ -8,15 +7,15 @@ on:
 
 jobs:
   main:
+    if: github.ref == 'refs/heads/main'
     uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
-    if: github.ref_name == 'main'
     with:
       image_name: my-awesome-app
-      tag: $GITHUB_RUN_NUMBER
-  develop:
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
-    if: github.ref_name == 'develop'
-    with:
-      image_name: my-awesome-app
-      tag: $GITHUB_RUN_NUMBER
+      tag: ${{ github.run_number }}
 
+  develop:
+    if: github.ref == 'refs/heads/develop'
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+    with:
+      image_name: my-awesome-app
+      tag: ${{ github.run_number }}
