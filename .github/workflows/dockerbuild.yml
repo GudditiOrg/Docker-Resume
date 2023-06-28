@@ -8,12 +8,14 @@ on:
 
 jobs:
   main:
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@main
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+    if: github.ref_name == 'main'
     with:
       image_name: my-awesome-app
       tag: $GITHUB_RUN_NUMBER
   develop:
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@develop
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+    if: github.ref_name == 'develop'
     with:
       image_name: my-awesome-app
       tag: $GITHUB_RUN_NUMBER
