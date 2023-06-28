@@ -6,15 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  do-it:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Run a one-line script
-        run: echo Hello, world!
-
   docker:
     uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@main
     with:
