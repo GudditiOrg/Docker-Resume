@@ -7,7 +7,7 @@ on:
 
 jobs:
   main:
-    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@develop
+    uses: GudditiOrg/Docker-Resume/.github/workflows/REUSABLE_WORKFLOW_FILE.yml@develop/*
     with:
       image_name: my-awesome-app
       tag: $GITHUB_RUN_NUMBER
