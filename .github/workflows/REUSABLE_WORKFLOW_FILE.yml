@@ -32,8 +32,4 @@ jobs:
       - name: Build and Push the Image
         run: docker build -t ${{inputs.image_name}}:${{env.final_tag}} .
 
-  do-something-else:
-    runs-on: ubuntu-latest
 
-    steps:
-    - run: echo "Hello"
