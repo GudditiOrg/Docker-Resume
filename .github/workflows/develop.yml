@@ -5,15 +5,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  main:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
+  develop:
       - name: Run reusable workflow
         uses: ./.github/workflows/REUSABLE_WORKFLOW_FILE.yml
-        if: startsWith(github.ref, 'refs/heads/develop/')
         with:
           image_name: my-awesome-app
           tag: ${{ github.run_number }}
