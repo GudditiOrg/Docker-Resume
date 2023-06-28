@@ -6,8 +6,7 @@ on:
 
 jobs:
   develop:
-      - name: Run reusable workflow
-        uses: ./.github/workflows/REUSABLE_WORKFLOW_FILE.yml
-        with:
-          image_name: my-awesome-app
-          tag: ${{ github.run_number }}
+    uses: ./.github/workflows/REUSABLE_WORKFLOW_FILE.yml
+    with:
+      image_name: my-awesome-app
+      tag: ${{ github.run_number }}
