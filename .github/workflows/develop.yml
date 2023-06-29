@@ -9,13 +9,12 @@ jobs:
     uses: ./.github/workflows/REUSABLE_WORKFLOW_FILE.yml
     with:
       image_name: my-awesome-app
-      tag: ${{ github.run_number }}
-    
-  output:
-    runs-on: ubuntu
-    depends: build
+      tag: ${{ github.run_number }}./.github/workflows/
+  job1:
+    uses: ./.github/workflows/Reusable.yml
+
+  job2:
+    runs-on: ubuntu-latest
+    needs: job1
     steps:
-      - name: call ouput
-        env:
-          DOCKER_IMAGE: ${{ needs.build.outputs.docker-build-image-name }}
-        run: echo $DOCKER_IMAGE
+      - run: echo ${{ needs.job1.outputs.firstword }} ${{ needs.job1.outputs.secondword }}
