@@ -10,3 +10,12 @@ jobs:
     with:
       image_name: my-awesome-app
       tag: ${{ github.run_number }}
+    
+  output:
+    runs-on: ubuntu
+    depends: build
+    steps:
+      - name: call ouput
+        env:
+          DOCKER_IMAGE: ${{ needs.build.outputs.docker-build-image-name }}
+        run: echo $DOCKER_IMAGE
