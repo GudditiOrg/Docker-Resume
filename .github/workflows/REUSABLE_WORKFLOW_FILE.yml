@@ -13,6 +13,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      docker-build-image-name: ${{ steps.step1.outputs.docker_image }}
 
     steps:      
       - uses: actions/checkout@v2
@@ -30,7 +32,11 @@ jobs:
           fi
 
       - name: Build and Push the Image
-        run: docker build -t ${{inputs.image_name}}:${{env.final_tag}} .
+        run: | 
+          
+          docker build -t ${{inputs.image_name}}:${{env.final_tag}} .
+          echo "docker_image=${{inputs.image_name}}:${{env.final_tag}}" >> "$GITHUB_OUTPUT"
+          
       - name: ref
         run:  echo ${{ github.ref_name }}
       - name: cat
