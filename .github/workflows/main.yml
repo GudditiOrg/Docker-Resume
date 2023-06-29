@@ -13,7 +13,7 @@ jobs:
     
   output:
     runs-on: ubuntu
-    depends: build
+    needs: build
     steps:
       - name: call ouput
         env:
