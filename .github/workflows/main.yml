@@ -12,10 +12,15 @@ jobs:
       tag: ${{ github.run_number }}
 
   output:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu
     needs: develop
     steps:
       - name: Call output
+        id: get-output
         env:
           DOCKER_IMAGE: ${{ needs.develop.outputs.docker-build-image-name }}
         run: echo $DOCKER_IMAGE
+
+      - name: Next Step
+        run: |
+          echo "The Docker image is ${{ steps.get-output.outputs.DOCKER_IMAGE }}"
