@@ -6,23 +6,16 @@ on:
         ECR_REGION:
             description: "ECR region name" 
             required: false
-            default: "us-east-1"
-            type: string
         ECR_REPOSITORY_NAME:
             description: "ECR repo name "
             required: false
-            default: "chat"
-            type: string
         IMAGE_NAME:
             description: "Stack image name"
             required: false
-            default: "chat"
-            type: string
         STACK_NAME:
             description: "Stack name"
             required: false
-            default: "chat"
-            type: string
+
 
 jobs:
   docker-build:
