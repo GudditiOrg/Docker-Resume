@@ -1,4 +1,4 @@
-name: docker-build
+name: build-and-push
 
 on:
   workflow_call:
@@ -20,24 +20,28 @@ on:
             required: false
             type: string
 
+    secrets:
+        AWS_ROLE_ARN:
+            required: true
+    outputs:
+        DOCKER-TAG:
+            description: "Exporting docker image name as output"
+            value: ${{ jobs.docker-build.outputs.docker-tag }}
+  
 
 jobs:
   docker-build:
     runs-on: ubuntu-latest
+    outputs:
+        docker-tag: ${{ steps.docker-tag.outputs.docker-tag }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Docker image build and test coverage
+        id: docker-tag
         run: |
-            docker build -t $docker_image:$tag .
+            docker build -t $DOCKER_IMAGE .
+            docker run -t --rm $DOCKER_IMAGE npm run coverage
+            echo "docker-tag=$DOCKER_IMAGE" >> "$GITHUB_ENV"
         env:
-            docker_image: ${{ inputs.ECR_REPOSITORY_NAME }}
-            tag: ${{ github.sha }}
-            
-      - name: Build, tag, and push docker image to Amazon ECR
-        id: step1
-        env:
-          REGISTRY: "amazon"
-          docker_name: ${{ inputs.ECR_REPOSITORY_NAME }}:${{ github.sha }}
-        run: |
-          docker tag $docker_name $REGISTRY/$docker_name
-          docker images
+            DOCKER_IMAGE: ${{ inputs.ECR_REPOSITORY_NAME }}:${{ github.sha }}
