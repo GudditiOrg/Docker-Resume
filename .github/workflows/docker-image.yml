@@ -42,3 +42,11 @@ jobs:
         env:
             DOCKER_IMAGE: ${{ inputs.ECR_REPOSITORY_NAME }}
             TAG: ${{ github.sha }}
+            
+      - name: Docker
+        run: |
+            image=$DOCKER_IMAGE:$TAG
+            echo $image
+        env:
+            DOCKER_IMAGE: ${{ inputs.ECR_REPOSITORY_NAME }}
+            TAG: ${{ github.sha }}
