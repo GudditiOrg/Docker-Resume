@@ -12,4 +12,12 @@ jobs:
       ECR_REGION: us-east-1
       ECR_REPOSITORY_NAME: my-repo
       IMAGE_NAME: my-image
-      STACK_NAME: my-stack    
+      STACK_NAME: my-stack 
+  output:
+    needs: call-docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: ouput
+        run: echo ${{ needs.call-docker-build.outputs.DOCKER-TAG }}
+
+  
