@@ -1,0 +1,30 @@
+name: docker-build
+
+on:
+  push:
+  
+
+env:
+  ECR_REPOSITORY_NAME: "chat"
+  IMAGE_NAME: "chat"
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Docker image build and test coverage
+        run: |
+            docker build -t $REPOSITORY:test .
+            docker images
+        env:
+            REPOSITORY: ${{ env.ECR_REPOSITORY_NAME }}
+            
+      - name: Build, tag, and push docker image to Amazon ECR
+        id: step1
+        env:
+          REGISTRY: 08328987248725555
+          REPOSITORY: ${{ env.ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker tag $REPOSITORY:test $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker images
