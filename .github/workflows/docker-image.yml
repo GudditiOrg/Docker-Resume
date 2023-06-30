@@ -6,15 +6,19 @@ on:
         ECR_REGION:
             description: "ECR region name" 
             required: false
+            type: string
         ECR_REPOSITORY_NAME:
             description: "ECR repo name "
             required: false
+            type: string
         IMAGE_NAME:
             description: "Stack image name"
             required: false
+            type: string
         STACK_NAME:
             description: "Stack name"
             required: false
+            type: string
 
 
 jobs:
