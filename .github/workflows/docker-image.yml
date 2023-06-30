@@ -5,19 +5,19 @@ on:
     inputs:
         ECR_REGION:
             description: "ECR region name" 
-            required: true
+            required: false
             default: "us-east-1"
         ECR_REPOSITORY_NAME:
             description: "ECR repo name "
-            required: true
+            required: false
             default: "chat"
         IMAGE_NAME:
             description: "Stack image name"
-            required: true
+            required: false
             default: "chat"            
         STACK_NAME:
             description: "Stack name"
-            required: true
+            required: false
             default: "chat"
 
 jobs:
