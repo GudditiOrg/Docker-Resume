@@ -7,17 +7,22 @@ on:
 
 jobs:
   call-docker-build:
-    uses: ./.github/workflows/docker-image.yml
-    with:
-      ECR_REGION: us-east-1
-      ECR_REPOSITORY_NAME: my-repo
-      IMAGE_NAME: my-image
-      STACK_NAME: my-stack 
+    runs-on: ubuntu-latest
+    outputs:
+      docker-tag: ${{ steps.output.outputs.DOCKER-TAG }}
+    steps:
+      - name: Run Docker Build Workflow
+        id: output
+        uses: ./.github/workflows/docker-image.yml
+        with:
+          ECR_REGION: us-east-1
+          ECR_REPOSITORY_NAME: my-repo
+          IMAGE_NAME: my-image
+          STACK_NAME: my-stack 
+
   output:
     needs: call-docker-build
     runs-on: ubuntu-latest
     steps:
-      - name: ouput
-        run: echo ${{ needs.call-docker-build.outputs.DOCKER-TAG }}
-
-  
+      - name: Output Docker Tag
+        run: echo ${{ needs.call-docker-build.outputs.docker-tag }}
