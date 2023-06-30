@@ -22,7 +22,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         id: step1
         env:
-          REGISTRY: 08328987248725555
+          REGISTRY: "amzon"
           REPOSITORY: ${{ env.ECR_REPOSITORY_NAME }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
