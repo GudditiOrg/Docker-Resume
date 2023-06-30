@@ -37,7 +37,8 @@ jobs:
         id: docker-tag
         run: |
             docker build -t $DOCKER_IMAGE .
-            docker run -t --rm $DOCKER_IMAGE npm run coverage
-            echo "docker-tag=$DOCKER_IMAGE" >> "$GITHUB_ENV"
+            docker run -t --rm $DOCKER_IMAGE:$TAG npm run coverage
+            echo "docker-tag=$DOCKER_IMAGE:$TAG" >> "$GITHUB_ENV"
         env:
-            DOCKER_IMAGE: ${{ inputs.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+            DOCKER_IMAGE: ${{ inputs.ECR_REPOSITORY_NAME }}
+            TAG: ${{ github.sha }}
