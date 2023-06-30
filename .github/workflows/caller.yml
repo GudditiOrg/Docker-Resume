@@ -15,9 +15,8 @@ jobs:
       STACK_NAME: my-stack 
   output:
     needs: call-docker-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: ouput
-        run: echo ${{ needs.call-docker-build.outputs.docker-tag }}
+    uses: ./.github/workflows/value.yml
+    with:
+      IMAGE_NAME: "${{ needs.call-docker-build.outputs.docker-tag }}"
 
   
