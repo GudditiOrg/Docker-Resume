@@ -8,3 +8,8 @@ on:
 jobs:
   call-docker-build:
     uses: ./.github/workflows/docker-image.yml
+    with:
+      ECR_REGION: us-east-1
+      ECR_REPOSITORY_NAME: my-repo
+      IMAGE_NAME: my-image
+      STACK_NAME: my-stack    
