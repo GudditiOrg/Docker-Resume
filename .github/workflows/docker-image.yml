@@ -37,7 +37,8 @@ jobs:
         id: docker-tag
         run: |
             docker build -t $DOCKER_IMAGE:$TAG .
-            echo "docker-tag=$DOCKER_IMAGE:$TAG" >> "$GITHUB_ENV"
+            image=$DOCKER_IMAGE:$TAG
+            echo "docker-tag=${image}" >> "$GITHUB_ENV"
         env:
             DOCKER_IMAGE: ${{ inputs.ECR_REPOSITORY_NAME }}
             TAG: ${{ github.sha }}
