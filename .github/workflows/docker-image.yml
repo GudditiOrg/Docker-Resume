@@ -14,10 +14,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Docker image build and test coverage
         run: |
-            docker build -t $REPOSITORY:test .
+            docker build -t $REPOSITORY:$IMAGE_TAG .
             docker images
         env:
             REPOSITORY: ${{ env.ECR_REPOSITORY_NAME }}
+            IMAGE_TAG: ${{ github.sha }}
             
       - name: Build, tag, and push docker image to Amazon ECR
         id: step1
@@ -26,5 +27,5 @@ jobs:
           REPOSITORY: ${{ env.ECR_REPOSITORY_NAME }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker tag $REPOSITORY:test $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker images
