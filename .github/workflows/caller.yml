@@ -1,0 +1,10 @@
+name: Call Docker Build Workflow
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on pushes to the 'main' branch
+
+jobs:
+  call-docker-build:
+    uses: ./.github/workflows/docker-image.yml@
