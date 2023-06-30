@@ -19,10 +19,6 @@ on:
             description: "Stack name"
             required: false
             type: string
-
-    secrets:
-        AWS_ROLE_ARN:
-            required: true
     outputs:
         DOCKER-TAG:
             description: "Exporting docker image name as output"
