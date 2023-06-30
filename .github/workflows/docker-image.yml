@@ -11,7 +11,7 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
-
+      - uses: actions/checkout@v3
       - name: Docker image build and test coverage
         run: |
             docker build -t $REPOSITORY:test .
