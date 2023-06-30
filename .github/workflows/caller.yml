@@ -17,6 +17,6 @@ jobs:
     needs: call-docker-build
     uses: ./.github/workflows/value.yml
     with:
-      IMAGE_NAME: "${{ needs.call-docker-build.outputs.docker-tag }}"
+      IMAGE_NAME: "${{ needs.call-docker-build.outputs.DOCKER_TAG }}"
 
   
