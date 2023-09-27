@@ -1,4 +1,39 @@
+name: Docker Image CI
 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
 name: Docker Image CI
 
 on:
@@ -22,3 +57,13 @@ jobs:
       with:
         image: gudditi/nginx-resume:latest
         annotations: true
+
+    - name: Docker Scout
+      id: docker-scout
+      uses: docker/scout-action@v0.18
+      with:
+        command: cves,recommendations,compare
+        to-latest: true
+        ignore-base: true
+        ignore-unchanged: true
+        only-fixed: true
