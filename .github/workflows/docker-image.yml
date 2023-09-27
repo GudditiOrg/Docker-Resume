@@ -26,7 +26,7 @@ jobs:
     - name: Docker Scout
       uses: docker/scout-action@v0.18.1
       with:
-        command: compare
+        command: cves
         image: gudditi/nginx-resume:latest
         ignore-unchanged: true
         only-severities: critical,high
