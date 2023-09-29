@@ -17,13 +17,13 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag gudditi/nginx-resume:latest
-    - name: Scan for vulnerabilities
-      uses: crazy-max/ghaction-container-scan@v3
-      with:
-        image: gudditi/nginx-resume:latest
-        annotations: true
+    # - name: Scan for vulnerabilities
+    #   uses: crazy-max/ghaction-container-scan@v3
+    #   with:
+    #     image: gudditi/nginx-resume:latest
+    #     annotations: true
       
-    - name: Docker Scout
+    - name: Docker Scout Scan for vulnerabilities
       uses: docker/scout-action@v0.18.1
       with:
         command: cves
